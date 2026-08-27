@@ -1,4 +1,5 @@
 const supabase = require('../_lib/supabase');
+const { parseMultipart } = require('../_lib/multipart');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,17 +15,24 @@ module.exports = async (req, res) => {
     }
 
     try {
-        let body = {};
-        let files = [];
-
         const contentType = req.headers['content-type'] || '';
+        let body = {};
+        let uploadedPaths = [];
+
         if (contentType.includes('multipart/form-data')) {
-            const formData = await req.formData();
-            for (const [key, value] of formData.entries()) {
-                if (typeof value === 'string') {
-                    body[key] = value;
-                } else if (value instanceof File) {
-                    files.push({ field: key, file: value });
+            const { fields, files } = await parseMultipart(req);
+            body = fields;
+
+            if (files.arquivos && files.arquivos.length > 0) {
+                for (const file of files.arquivos) {
+                    const ext = file.filename.split('.').pop() || 'bin';
+                    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('uploads')
+                        .upload(filename, file.buffer, { contentType: file.mimeType });
+                    if (!uploadError) {
+                        uploadedPaths.push(filename);
+                    }
                 }
             }
         } else {
@@ -35,19 +43,6 @@ module.exports = async (req, res) => {
 
         if (!rip || !campo_nome) {
             return res.status(400).json({ error: 'RIP e campo_nome são obrigatórios.' });
-        }
-
-        let uploadedPaths = [];
-        for (const { field, file } of files) {
-            const ext = file.name.split('.').pop() || 'bin';
-            const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-            const buffer = Buffer.from(await file.arrayBuffer());
-            const { error: uploadError } = await supabase.storage
-                .from('uploads')
-                .upload(filename, buffer, { contentType: file.type });
-            if (!uploadError) {
-                uploadedPaths.push(filename);
-            }
         }
 
         const { data: existing } = await supabase

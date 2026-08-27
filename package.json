@@ -4,6 +4,8 @@
   "description": "Formulário de Caracterização SPU - Vercel + Supabase",
   "private": true,
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0"
+    "@supabase/supabase-js": "^2.45.0",
+    "busboy": "^1.6.0",
+    "busboy": "^1.6.0"
   }
 }

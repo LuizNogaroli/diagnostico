@@ -1,4 +1,5 @@
 const supabase = require('../_lib/supabase');
+const { parseMultipart } = require('../_lib/multipart');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -23,26 +24,19 @@ module.exports = async (req, res) => {
 
     if (req.method === 'POST') {
         try {
-            const formData = await req.formData();
-            const body = {};
-            for (const [key, value] of formData.entries()) {
-                if (typeof value === 'string') {
-                    body[key] = value;
-                }
-            }
+            const { fields, files } = await parseMultipart(req);
+            const body = fields;
 
             const fileFields = ['imagem', 'planta_pdf', 'planta_sei_pdf', 'vetorial'];
             for (const field of fileFields) {
-                const files = formData.getAll(field);
-                if (files.length > 0 && files[0] instanceof File) {
+                if (files[field] && files[field].length > 0) {
                     const uploadedPaths = [];
-                    for (const file of files) {
-                        const ext = file.name.split('.').pop() || 'bin';
+                    for (const file of files[field]) {
+                        const ext = file.filename.split('.').pop() || 'bin';
                         const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-                        const buffer = Buffer.from(await file.arrayBuffer());
                         const { error: uploadError } = await supabase.storage
                             .from('uploads')
-                            .upload(filename, buffer, { contentType: file.type });
+                            .upload(filename, file.buffer, { contentType: file.mimeType });
                         if (!uploadError) {
                             uploadedPaths.push(filename);
                         }
