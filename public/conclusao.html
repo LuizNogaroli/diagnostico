@@ -22,6 +22,7 @@
     <div class="conclusao-container">
         <h1>✅ Diagnóstico Concluído!</h1>
         <p>O procedimento foi finalizado com sucesso.</p>
+        <div id="rip-display" style="font-size: 18px; font-weight: bold; color: #15803d; background: #f0fdf4; padding: 12px; border-radius: 8px; border: 1px solid #86efac; margin: 15px 0;"></div>
         <p>Utilize as opções abaixo para gerar os relatórios do processo:</p>
         
         <a id="btn-relatorio-solicitacoes" href="#" target="_blank" class="btn-report btn-solicitacoes">📄 Relatório de Inconsistências Cadastrais</a>
@@ -46,6 +47,7 @@
         }
 
         if (rip) {
+            document.getElementById('rip-display').innerText = 'RIP: ' + rip;
             if (modo !== 'edicao') {
                 document.getElementById('btn-relatorio-solicitacoes').href = `relatorio.html?rip=${rip}`;
             }
