@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico do Imóvel</title>
+    <link rel="stylesheet" href="styles-forms.css?v=20260824a">
+    <link rel="stylesheet" href="hints.css">
+    <style>
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        
+        .search-container {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+        }
+        
+        .stepper-menu a {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stepper-menu a.completed { background: #28a745 !important; color: white !important; }
+        .stepper-menu a.active-step { box-shadow: 0 0 0 4px rgba(0,86,179,0.3); }
+        
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            right: 30px;
+            bottom: 30px;
+            font-size: 17px;
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>DIAGNÓSTICO DO IMÓVEL</h2>
+        
+        <!-- BUSCA POR RIP -->
+                <!-- BUSCA POR RIP MOVIDA PARA INDEX.HTML -->
+        <div id="alert-message" style="margin-bottom: 20px; font-weight: bold; color: #0056b3; text-align: center;"></div>
+        <!-- MENU BOLINHAS -->
+                        <div id="stepper" class="stepper-menu" style="display: none; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <a onclick="goToStep(1)" id="indicator-1" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="1. DADOS DO IMÓVEL">1</a>
+            <a onclick="goToStep(2)" id="indicator-2" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="2. SITUAÇÃO CARTORIAL">2</a>
+            <a onclick="goToStep(3)" id="indicator-3" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="3. SITUAÇÃO URBANÍSTICA">3</a>
+            <a onclick="goToStep(4)" id="indicator-4" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="4. AFETAÇÕES">4</a>
+            <a onclick="goToStep(5)" id="indicator-5" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="5. ENCAMINHAMENTOS">5</a>
+        </div>
+        <form id="form-diagnostico" novalidate >
+            <!-- Hidden RIP field to bind the form submission -->
+            <input type="hidden" id="rip" name="rip" value="">
+
+            
+        <div class="wizard-step" id="step-3">
+                <hr>
+                <h3 class="section-label">SITUAÇÃO URBANÍSTICA</h3>
+                
+                <div class="form-group">
+                    <label>Loteamento:</label>
+                    <div class="radio-group" style="display: flex; gap: 15px;">
+                        <label><input type="radio" name="loteamento" value="Sim" id="radio_lot_sim"> Sim</label>
+                        <label><input type="radio" name="loteamento" value="Não"> Não</label>
+                        <label><input type="radio" name="loteamento" value="Sem informacao"> Sem informação</label>
+                    </div>
+                    <div id="campo_lot_sim" class="conditional-field" style="display:none; margin-top:10px;">
+                        <textarea name="loteamento_detalhes" rows="2" placeholder="nome do loteamento, lote, quadra..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <label for="planta_sei" style="font-weight: 700; color: #1e3a8a; margin-bottom: 8px; display: block;">Planta Loteamento:</label>
+                    <input type="text" id="planta_sei" name="planta_sei" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;">
+                    <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px;">
+                        <div class="no-file-msg" style="font-size: 0.8em; color: red; margin-bottom: 5px; display: none;">Nenhum arquivo anexado na base de dados</div>
+                        <input type="file" id="file_planta_sei_pdf" name="planta_sei_pdf" multiple style="display:none;" onchange="handleFileUploadUI(this, 'planta_sei_pdf')" accept=".pdf">
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                            <button type="button" class="btn-primary btn-attach-file" onclick="document.getElementById('file_planta_sei_pdf').click()" style="padding: 8px 16px; background: #f8f9fa; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; width: fit-content;">📁 Anexar PDFs</button>
+                            <div id="file-list_planta_sei_pdf" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="zoneamento">Zoneamento Municipal:</label>
+                    <input type="text" id="zoneamento" name="zoneamento" placeholder="Indicar zona (Plano Diretor)">
+                </div>
+
+                <h4 class="section-label">CARACTERIZAÇÃO</h4>
+
+                <div class="form-group">
+                    <label>Demarcação:</label>
+                    <div class="radio-group" style="display: flex; flex-direction: column; gap: 8px;">
+                        <label><input type="radio" name="demarcacao" value="Concluida"> Demarcação Concluída</label>
+                        <label><input type="radio" name="demarcacao" value="LPM posicionada"> LPM/LMEO posicionada</label>
+                        <label><input type="radio" name="demarcacao" value="Iniciada" id="radio_dem_ini"> Iniciada</label>
+                        <label><input type="radio" name="demarcacao" value="Não iniciada"> Não iniciada</label>
+                    </div>
+                    <div id="campo_dem_ini" class="conditional-field" style="display:none; margin-top:10px;">
+                        <input type="text" name="demarcacao_estagio" placeholder="Indicar estágio">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Identificação Direta:</label>
+                    <div class="radio-group" style="display: flex; gap: 15px;">
+                        <label><input type="radio" name="id_direta" value="Concluida" id="radio_idd_con"> Concluída</label>
+                        <label><input type="radio" name="id_direta" value="Iniciada" id="radio_idd_ini"> Iniciada</label>
+                        <label><input type="radio" name="id_direta" value="Não iniciada"> Não iniciada</label>
+                    </div>
+                    <div id="campo_idd_con" class="conditional-field" style="display:none; margin-top:10px;">
+                        <input type="text" name="idd_relatorio" placeholder="Relatório SEI">
+                    </div>
+                    <div id="campo_idd_ini" class="conditional-field" style="display:none; margin-top:10px;">
+                        <input type="text" name="idd_estagio" placeholder="Indicar estágio">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Do Imóvel:</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Planta PDF -->
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.9em; color: #555;">Planta PDF:</label>
+                            <div class="no-file-msg" style="font-size: 0.8em; color: red; margin-bottom: 5px; display: none;">Nenhum arquivo anexado na base de dados</div>
+                            <input type="file" id="file_planta_pdf" name="planta_pdf" multiple style="display:none;" onchange="handleFileUploadUI(this, 'planta_pdf')" accept=".pdf">
+                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                                <button type="button" class="btn-primary btn-attach-file" onclick="document.getElementById('file_planta_pdf').click()" style="padding: 8px 16px; background: #f8f9fa; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; width: fit-content;">📁 Anexar PDFs</button>
+                                <div id="file-list_planta_pdf" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Memorial Descritivo -->
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.9em; color: #555;">Memorial Descritivo:</label>
+                            <textarea name="memorial" rows="2" placeholder="Descreva o memorial" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+                        </div>
+
+                        <!-- Arquivo Vetorial -->
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.9em; color: #555;">Arquivo Vetorial:</label>
+                            <div class="no-file-msg" style="font-size: 0.8em; color: red; margin-bottom: 5px; display: none;">Nenhum arquivo anexado na base de dados</div>
+                            <input type="file" id="file_vetorial" name="vetorial" multiple style="display:none;" onchange="handleFileUploadUI(this, 'vetorial')" accept=".zip,.kml,.kmz,.shp,.dwg">
+                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                                <button type="button" class="btn-primary btn-attach-file" onclick="document.getElementById('file_vetorial').click()" style="padding: 8px 16px; background: #f8f9fa; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; width: fit-content;">📁 Anexar Vetoriais</button>
+                                <div id="file-list_vetorial" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="form-group info-complementares-box">
+                    <label for="urb_informacoes_complementares">Informações Complementares:</label>
+                    <textarea id="urb_informacoes_complementares" name="urb_informacoes_complementares" rows="4" placeholder="Insira informações complementares aqui..."></textarea>
+                </div>
+
+                <div class="form-group solicitacao-box" style="margin-top: 20px;">
+                                        <label style="font-weight: bold;">Há inconsistências no cadastro?</label>
+                    <div style="display: flex; gap: 20px; margin-top: 6px;">
+                        <label><input type="radio" name="solicitacao_sim_nao" value="Sim" onchange="toggleSolicitacaoCampos(this)"> Sim</label>
+                        <label><input type="radio" name="solicitacao_sim_nao" value="Não" onchange="toggleSolicitacaoCampos(this)" checked> Não</label>
+                    </div>
+                    <div id="solicitacao_campos" style="display: none; margin-top: 12px;">
+                        <label for="solicitacao_alteracao" style="font-weight: bold;">Descreva as alterações necessárias:</label>
+                        <textarea id="solicitacao_alteracao" name="solicitacao_alteracao" rows="3" placeholder="Descreva aqui as alterações necessárias no cadastro deste imóvel..." style="width: 100%;"></textarea>
+                        <input type="file" id="solicitacao_arquivos" multiple style="display:none;" onchange="handleSolicitacaoFileUploadUI(this)">
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                            <button type="button" class="btn-primary btn-attach-solicitacao" onclick="document.getElementById('solicitacao_arquivos').click()" style="padding: 8px 16px; background: #f8f9fa; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; width: fit-content;">📁 Anexar Arquivos</button>
+                            <div id="file-list_solicitacao" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="solicitacao_etapa_nome" value="Etapa 3 - Situação Urbanística">
+                </div>
+
+                <div class="form-actions" style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" class="btn-primary" onclick="goToStep(2)" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">◄ Voltar</button>
+                    <button type="button" class="btn-primary btn-save-next" data-next="4" style="padding: 10px 20px; font-size: 14px; cursor: pointer; border-radius: 5px; background: #0056b3; color: white; border: none;">Salvar Parcial e Avançar ➔ </button>
+                    <button type="button" class="btn-secondary btn-next-only" onclick="goToStep(4)" style="padding: 10px 20px; font-size: 14px; cursor: pointer; border-radius: 5px; background: #6c757d; color: white; border: none; display: none;">Avançar ➔</button>
+                </div>
+            </div>
+
+            
+        </form>
+    </div>
+    
+    <div id="toast" class="toast">Salvo com sucesso!</div>
+
+    <script src="scripts.js?v=20260824a"></script>
+</body>
+</html>

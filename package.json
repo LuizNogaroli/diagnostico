@@ -1,0 +1,9 @@
+{
+  "name": "spu-form-caract",
+  "version": "2.0.0",
+  "description": "Formulário de Caracterização SPU - Vercel + Supabase",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

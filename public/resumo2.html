@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo Ficha do Diagnóstico do Imóvel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .report-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .report-header p {
+            margin: 2px 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .report-header h1 {
+            margin: 8px 0;
+            color: #1e3a5f;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .field-label {
+            width: 240px;
+            font-weight: 600;
+            color: #334155;
+            flex-shrink: 0;
+        }
+
+        .field-value {
+            flex: 1;
+            margin-left: 6px;
+            padding: 3px 10px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .field-value.empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .field-value.highlight {
+            color: #ea580c;
+            font-weight: bold;
+        }
+
+        .badge-file {
+            display: inline-block;
+            padding: 2px 10px;
+            background: #e0f2fe;
+            border: 1px solid #7dd3fc;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            color: #0369a1;
+            text-decoration: none;
+            margin-right: 6px;
+        }
+
+        .btn-print {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 10px 22px;
+            background: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .btn-print:hover { background: #1e3a5f; }
+
+        .report-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #888;
+            border-top: 1px solid #ddd;
+            padding-top: 16px;
+        }
+
+        @media print {
+            body { padding: 0; }
+            .btn-print { display: none !important; }
+            .field-value { background: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section-block { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <button class="btn-print" onclick="window.print()">Imprimir Resumo Ficha (PDF)</button>
+
+    <div class="report-container">
+        <header class="report-header">
+            <p>Ministério da Gestão e da Inovação em Serviços Públicos</p>
+            <p>Secretaria de Patrimônio da União - SPU</p>
+            <h1>Diagnóstico e Caracterização do Imóvel</h1>
+            <p id="rip-header">RIP: Carregando...</p>
+        </header>
+
+        <div id="sections-container"></div>
+
+        <footer class="report-footer">
+            Documento gerado automaticamente pelo Sistema de Diagnóstico SPU em <span id="generation-date"></span>
+        </footer>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+        const urlParams = new URLSearchParams(window.location.search);
+        const rip = urlParams.get('rip');
+
+        document.getElementById('generation-date').innerText = new Date().toLocaleString('pt-BR');
+
+        const sectionMap = [
+            {
+                title: "1. Situação Cadastral",
+                fields: [
+                    { label: "Sistema:", key: "sistema" },
+                    { label: "RIP SPIUnet:", key: "sistema_spiu_rip" },
+                    { label: "RIP SIAPA:", key: "sistema_siapa_rip" },
+                    { label: "NBP CIDI:", key: "sistema_cidi_nbp" },
+                    { label: "Contrato SARP:", key: "sistema_sarp_contrato" }
+                ]
+            },
+            {
+                title: "2. Situação Cartorial",
+                fields: [
+                    { label: "Registro Cartorial:", key: "reg_cartorial" },
+                    { label: "Detalhes Matrícula:", key: "reg_matricula_detalhes" },
+                    { label: "Detalhes Transcrição:", key: "reg_transcricao_detalhes" },
+                    { label: "Matrícula Individualizada:", key: "mat_individualizada" },
+                    { label: "Circunscrições atuais e anteriores:", key: "circunscricoes", full: true },
+                    { label: "Titularidade:", key: "titularidade" },
+                    { label: "Outros Titulares:", key: "titularidade_outros" }
+                ]
+            },
+            {
+                title: "3. Dados do Imóvel",
+                fields: [
+                    { label: "Processo SEI:", key: "processo" },
+                    { label: "Identificação/Endereço:", key: "identificacao", full: true },
+                    { label: "Coordenadas:", key: "coordenadas" },
+                    { label: "Tipo de Imóvel:", key: "tipo_imovel" },
+                    { label: "Natureza:", key: "natureza" },
+                    { label: "Inscrição Municipal:", key: "inscricao_municipal" },
+                    { label: "CCIR:", key: "ccir" },
+                    { label: "Conceituação:", key: "conceituacao" },
+                    { label: "Especificação (Água):", key: "conceituacao_agua_especificar" },
+                    { label: "Classificação:", key: "classificacao" },
+                    { label: "Uso Especificar:", key: "classificacao_uso_especificar" },
+                    { label: "Área do Terreno:", key: "area_terreno" },
+                    { label: "Área Construída:", key: "area_construcao" },
+                    { label: "Informações Complementares:", key: "observacoes1", full: true }
+                ]
+            },
+            {
+                title: "4. Situação Urbanística",
+                fields: [
+                    { label: "Loteamento:", key: "loteamento" },
+                    { label: "Detalhes Loteamento:", key: "loteamento_detalhes", full: true },
+                    { label: "Planta Loteamento SEI:", key: "planta_sei" },
+                    { label: "Zoneamento Municipal:", key: "zoneamento" },
+                    { label: "Informações Complementares:", key: "urb_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "5. Situação Dominial",
+                fields: [
+                    { label: "Forma de Aquisição:", key: "aquisicao" },
+                    { label: "Outra Forma:", key: "aquisicao_outra" },
+                    { label: "Informações Complementares:", key: "dom_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "6. Caracterização",
+                fields: [
+                    { label: "Demarcação:", key: "demarcacao" },
+                    { label: "Estágio Demarcação:", key: "demarcacao_estagio" },
+                    { label: "Identificação Direta:", key: "id_direta" },
+                    { label: "Relatório SEI (IDD):", key: "idd_relatorio" },
+                    { label: "Estágio IDD:", key: "idd_estagio" },
+                    { label: "Memorial Descritivo:", key: "memorial", full: true }
+                ]
+            },
+            {
+                title: "7. Afetações e Interferências",
+                fields: [
+                    { label: "Faixa de Fronteira:", key: "interf_fronteira", bool: true },
+                    { label: "Faixa de Segurança:", key: "interf_seguranca", bool: true },
+                    { label: "1.320 metros (estab. militares):", key: "interf_1320m", bool: true },
+                    { label: "Faixa de 100 metros (orla):", key: "interf_100m", bool: true },
+                    { label: "Faixa de Domínio Ferrovia/Rodovia:", key: "interf_dominio", bool: true },
+                    { label: "Unidade de Conservação:", key: "afet_uc", bool: true },
+                    { label: "Tipo UC:", key: "uc_tipo" },
+                    { label: "Terra Indígena:", key: "afet_indigena", bool: true },
+                    { label: "Comunidades Tradicionais:", key: "afet_tradicionais", bool: true },
+                    { label: "Território Quilombola:", key: "afet_quilombolas", bool: true },
+                    { label: "Poligonal de Porto Organizado:", key: "afet_porto", bool: true },
+                    { label: "PDISP:", key: "afet_pdisp", bool: true },
+                    { label: "Regularização Fundiária/REURB:", key: "afet_reurb", bool: true },
+                    { label: "Operacional RFFSA:", key: "afet_rffsa", bool: true },
+                    { label: "Tombado Patrimônio Histórico:", key: "afet_tombado", bool: true },
+                    { label: "Tipo Tombamento:", key: "tom_tipo" },
+                    { label: "Outro:", key: "afet_outro", bool: true },
+                    { label: "Especificar Outro:", key: "afet_outro_espec" },
+                    { label: "Informações Complementares:", key: "afet_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "8. Encaminhamentos",
+                fields: [
+                    { label: "Diligências Externas/Internas:", key: "enc_diligencias", bool: true },
+                    { label: "Ajustes nas Peças Técnicas:", key: "enc_ajustes", bool: true },
+                    { label: "Análise Técnica de Incorporação:", key: "enc_analise", bool: true },
+                    { label: "Informações Complementares:", key: "enc_informacoes_complementares", full: true },
+                    { label: "Assinatura (Nome/Cargo/Data):", key: "assinatura", full: true }
+                ]
+            }
+        ];
+
+        const fileKeys = [
+            { label: "Fotos do Imóvel:", key: "imagem" },
+            { label: "Planta PDF:", key: "planta_pdf" },
+            { label: "Planta Loteamento SEI (PDF):", key: "planta_sei_pdf" },
+            { label: "Arquivo Vetorial:", key: "vetorial" }
+        ];
+
+        function formatValue(val, isBool) {
+            if (isBool) return val == 1 ? "SIM" : "NÃO";
+            if (val === null || val === undefined || String(val).trim() === "") {
+                return '<span class="empty">-</span>';
+            }
+            return String(val);
+        }
+
+        function renderFiles(data) {
+            let html = '<div class="section-block"><div class="section-title">9. Anexos e Documentos</div>';
+            fileKeys.forEach(f => {
+                let filesMarkup = '<span class="empty">-</span>';
+                if (data[f.key]) {
+                    try {
+                        const files = JSON.parse(data[f.key]);
+                        if (files.length > 0) {
+                            filesMarkup = files.map(p => {
+                                const name = p.split(/[/\\]/).pop();
+                                const url = '/' + p.replace(/\\/g, '/').replace(/^\/+/, '');
+                                return `<a class="badge-file" href="${url}" target="_blank">${name}</a>`;
+                            }).join(' ');
+                        }
+                    } catch (e) {}
+                }
+                html += `
+                    <div class="field-row">
+                        <span class="field-label">${f.label}</span>
+                        <span class="field-value">${filesMarkup}</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        if (rip) {
+            document.getElementById('rip-header').innerText = `Imóvel RIP nº ${rip}`;
+
+            fetch(`${BASE_URL}/api/diagnostico/${encodeURIComponent(rip)}`)
+                .then(res => res.json())
+                .then(result => {
+                    const container = document.getElementById('sections-container');
+                    container.innerHTML = '';
+
+                    if (result.success) {
+                        const data = result.data;
+
+                        sectionMap.forEach((section, idx) => {
+                            let html = `<div class="section-block"><div class="section-title">${section.title}</div>`;
+                            section.fields.forEach(field => {
+                                html += `
+                                    <div class="field-row">
+                                        <span class="field-label">${field.label}</span>
+                                        <span class="field-value">${formatValue(data[field.key], field.bool)}</span>
+                                    </div>
+                                `;
+                            });
+                            html += '</div>';
+                            container.innerHTML += html;
+                        });
+
+                        container.innerHTML += renderFiles(data);
+                    } else {
+                        container.innerHTML = '<p style="color:red; text-align:center;">RIP não encontrado na base de dados.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center;">Erro ao carregar dados do servidor.</p>';
+                });
+        } else {
+            document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center;">RIP não especificado.</p>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo do Diagnóstico do Imóvel</title>
+    <style>
+        /* Estilos baseados no cópia-report.css */
+        @media screen, print {
+            body {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f8fafc;
+                margin: 0;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .report-container {
+                width: 100%;
+                max-width: 900px;
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            }
+
+            .report-header {
+                text-align: center;
+                border-bottom: 3px solid #1a4e8a;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                width: 100%;
+            }
+
+            .report-header h1 {
+                margin: 10px 0;
+                color: #1a4e8a;
+                font-size: 1.8rem;
+                text-transform: uppercase;
+            }
+
+            .report-header p {
+                margin: 5px 0;
+                font-size: 1rem;
+                color: #64748b;
+            }
+
+            .report-section {
+                margin-bottom: 30px;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .report-section-title {
+                background-color: #f1f5f9;
+                padding: 12px 20px;
+                border-bottom: 1px solid #e2e8f0;
+                font-weight: 700;
+                color: #1e3a8a;
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .report-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+            }
+
+            .report-item {
+                padding: 12px 20px;
+                border-bottom: 1px solid #f1f5f9;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .report-item:nth-child(odd) {
+                border-right: 1px solid #f1f5f9;
+            }
+
+            .report-item.full-width {
+                grid-column: span 2;
+                border-right: none;
+            }
+
+            .report-label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #64748b;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+                letter-spacing: 0.025em;
+            }
+
+            .report-value {
+                font-size: 1rem;
+                color: #1e293b;
+                font-weight: 500;
+                min-height: 1.5rem;
+            }
+
+            .report-value.empty {
+                color: #dc2626;
+                font-style: italic;
+                font-weight: 400;
+            }
+
+            .btn-print {
+                background: #1e40af;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.2s;
+            }
+
+            .btn-print:hover {
+                background: #1e3a8a;
+            }
+
+            .badge-file {
+                display: inline-flex;
+                align-items: center;
+                background: #eff6ff;
+                color: #2563eb;
+                padding: 4px 12px;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                border: 1px solid #dbeafe;
+                margin-top: 4px;
+            }
+
+            @media print {
+                body { background: white; padding: 0; }
+                .report-container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; }
+                .btn-print { display: none; }
+                .report-section { break-inside: avoid; }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        Imprimir Diagnóstico Completo (PDF)
+    </button>
+
+    <div class="report-container">
+        <header class="report-header">
+            <p>Ministério da Gestão e da Inovação em Serviços Públicos</p>
+            <p>Secretaria de Patrimônio da União - SPU</p>
+            <h1>Diagnóstico e Caracterização do Imóvel</h1>
+            <p id="rip-header">RIP: Carregando...</p>
+        </header>
+
+        <div id="sections-container">
+            <!-- As seções serão carregadas via JS -->
+        </div>
+
+        <footer style="margin-top: 40px; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            Documento gerado automaticamente pelo Sistema de Diagnóstico SPU em <span id="generation-date"></span>
+        </footer>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+        const urlParams = new URLSearchParams(window.location.search);
+        const rip = urlParams.get('rip');
+
+        document.getElementById('generation-date').innerText = new Date().toLocaleString('pt-BR');
+
+        const sectionMap = [
+            {
+                title: "1. Situação Cadastral",
+                fields: [
+                    { label: "Sistema", key: "sistema" },
+                    { label: "RIP SPIUnet", key: "sistema_spiu_rip" },
+                    { label: "RIP SIAPA", key: "sistema_siapa_rip" },
+                    { label: "NBP CIDI", key: "sistema_cidi_nbp" },
+                    { label: "Contrato SARP", key: "sistema_sarp_contrato" }
+                ]
+            },
+            {
+                title: "2. Situação Cartorial",
+                fields: [
+                    { label: "Registro Cartorial", key: "reg_cartorial" },
+                    { label: "Detalhes Matrícula", key: "reg_matricula_detalhes" },
+                    { label: "Detalhes Transcrição", key: "reg_transcricao_detalhes" },
+                    { label: "Matrícula Individualizada", key: "mat_individualizada" },
+                    { label: "Circunscrições", key: "circunscricoes" }
+                ]
+            },
+            {
+                title: "3. Dados do Imóvel",
+                fields: [
+                    { label: "Processo SEI", key: "processo" },
+                    { label: "CEP", key: "cep" },
+                    { label: "Logradouro", key: "logradouro", full: true },
+                    { label: "Número", key: "numero" },
+                    { label: "Complemento", key: "complemento" },
+                    { label: "Bairro", key: "bairro" },
+                    { label: "Cidade", key: "cidade" },
+                    { label: "UF", key: "uf" },
+                    { label: "Identificação/Endereço (completo)", key: "identificacao", full: true },
+                    { label: "Coordenadas", key: "coordenadas" },
+                    { label: "Inscrição Municipal", key: "inscricao_municipal" },
+                    { label: "CCIR", key: "ccir" }
+                ]
+            },
+            {
+                title: "4. Situação Urbanística",
+                fields: [
+                    { label: "Loteamento", key: "loteamento" },
+                    { label: "Detalhes Loteamento", key: "loteamento_detalhes", full: true },
+                    { label: "Planta SEI", key: "planta_sei" },
+                    { label: "Zoneamento", key: "zoneamento" }
+                ]
+            },
+            {
+                title: "5. Situação Dominial",
+                fields: [
+                    { label: "Titularidade", key: "titularidade" },
+                    { label: "Outros Titulares", key: "titularidade_outros" },
+                    { label: "Forma de Aquisição", key: "aquisicao" },
+                    { label: "Outra Forma", key: "aquisicao_outra" },
+                    { label: "Demarcação", key: "demarcacao" },
+                    { label: "Estágio Demarcação", key: "demarcacao_estagio" }
+                ]
+            },
+            {
+                title: "6. Caracterização",
+                fields: [
+                    { label: "Conceituação", key: "conceituacao" },
+                    { label: "Especificação Água", key: "conceituacao_agua_especificar" },
+                    { label: "Classificação", key: "classificacao" },
+                    { label: "Uso Especificar", key: "classificacao_uso_especificar" },
+                    { label: "Área Terreno (m²)", key: "area_terreno" },
+                    { label: "Área Construída (m²)", key: "area_construcao" },
+                    { label: "Observações", key: "observacoes1", full: true }
+                ]
+            },
+            {
+                title: "7. Afetações e Interferências",
+                fields: [
+                    { label: "Faixa de Fronteira", key: "interf_fronteira", bool: true },
+                    { label: "Segurança Nacional", key: "interf_seguranca", bool: true },
+                    { label: "1.320m / 100m / Domínio", key: "interf_dominio", bool: true },
+                    { label: "Unidade de Conservação", key: "afet_uc", bool: true },
+                    { label: "Tipo UC", key: "uc_tipo" },
+                    { label: "Tombado", key: "afet_tombado", bool: true },
+                    { label: "Tipo Tombamento", key: "tom_tipo" },
+                    { label: "Outras Afetações", key: "afet_outro_espec", full: true }
+                ]
+            },
+            {
+                title: "8. Encaminhamentos",
+                fields: [
+                    { label: "Diligências", key: "enc_diligencias", bool: true },
+                    { label: "Ajustes Técnicos", key: "enc_ajustes", bool: true },
+                    { label: "Análise Técnica", key: "enc_analise", bool: true },
+                    { label: "Assinatura", key: "assinatura", full: true }
+                ]
+            }
+        ];
+
+        function formatValue(val, isBool) {
+            if (isBool) return val == 1 ? "SIM" : "NÃO";
+            if (val === null || val === undefined || val === "" || String(val).includes("Exemplo preenchido")) {
+                return '<span class="empty">NÃO INFORMADO</span>';
+            }
+            return String(val).toUpperCase();
+        }
+
+        if (rip) {
+            document.getElementById('rip-header').innerText = `Imóvel RIP nº ${rip}`;
+            
+            fetch(`${BASE_URL}/api/diagnostico/${encodeURIComponent(rip)}`)
+                .then(res => res.json())
+                .then(result => {
+                    const container = document.getElementById('sections-container');
+                    container.innerHTML = '';
+                    
+                    if (result.success) {
+                        const data = result.data;
+                        
+                        sectionMap.forEach(section => {
+                            let sectionHtml = `
+                                <div class="report-section">
+                                    <div class="report-section-title">${section.title}</div>
+                                    <div class="report-grid">
+                            `;
+                            
+                            section.fields.forEach(field => {
+                                const val = data[field.key];
+                                const formatted = formatValue(val, field.bool);
+                                sectionHtml += `
+                                    <div class="report-item ${field.full ? 'full-width' : ''}">
+                                        <div class="report-label">${field.label}</div>
+                                        <div class="report-value">${formatted}</div>
+                                    </div>
+                                `;
+                            });
+                            
+                            sectionHtml += `</div></div>`;
+                            container.innerHTML += sectionHtml;
+                        });
+
+                        // Adicionar seção de arquivos
+                        let filesHtml = `
+                            <div class="report-section">
+                                <div class="report-section-title">Anexos e Documentos</div>
+                                <div class="report-grid">
+                        `;
+                        ['imagem', 'planta_pdf', 'vetorial'].forEach(key => {
+                            const val = data[key];
+                            let filesMarkup = '<span class="empty">NENHUM ARQUIVO</span>';
+                            if (val) {
+                                try {
+                                    const files = JSON.parse(val);
+                                    filesMarkup = files.map(f => `<div class="badge-file">${f.split(/[/\\]/).pop()}</div>`).join(' ');
+                                } catch(e) {}
+                            }
+                            filesHtml += `
+                                <div class="report-item full-width">
+                                    <div class="report-label">${key.toUpperCase()}</div>
+                                    <div class="report-value">${filesMarkup}</div>
+                                </div>
+                            `;
+                        });
+                        filesHtml += `</div></div>`;
+                        container.innerHTML += filesHtml;
+
+                    } else {
+                        container.innerHTML = '<p style="color:red; text-align:center; padding: 20px;">RIP não encontrado na base de dados.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center; padding: 20px;">Erro ao carregar dados do servidor.</p>';
+                });
+        } else {
+            document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center; padding: 20px;">RIP não especificado.</p>';
+        }
+    </script>
+
+</body>
+</html>

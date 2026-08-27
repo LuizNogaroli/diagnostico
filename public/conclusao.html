@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Concluído</title>
+    <link rel="stylesheet" href="styles-forms.css">
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f8fafc; }
+        .conclusao-container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
+        h1 { color: #166534; margin-bottom: 20px; }
+        .btn-report { display: block; width: 100%; padding: 12px; margin-top: 15px; border-radius: 6px; border: none; cursor: pointer; font-size: 16px; font-weight: 600; text-decoration: none; color: white; text-align: center; }
+        .btn-solicitacoes { background: #17a2b8; }
+        .btn-resumo { background: #0056b3; }
+        .btn-resumo2 { background: #16a34a; }
+        .btn-resumo3 { background: #7c3aed; }
+        .btn-relatorio-completo { background: #b45309; }
+        .btn-voltar { background: #6c757d; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="conclusao-container">
+        <h1>✅ Diagnóstico Concluído!</h1>
+        <p>O procedimento foi finalizado com sucesso.</p>
+        <p>Utilize as opções abaixo para gerar os relatórios do processo:</p>
+        
+        <a id="btn-relatorio-solicitacoes" href="#" target="_blank" class="btn-report btn-solicitacoes">📄 Relatório de Inconsistências Cadastrais</a>
+        <!-- Botões desativados: manter apenas "Gerar Resumo Misto (PDF)" visível
+        <a id="btn-resumo-completo" href="#" target="_blank" class="btn-report btn-resumo">📄 Gerar Resumo Completo (PDF)</a>
+        <a id="btn-resumo-ficha" href="#" target="_blank" class="btn-report btn-resumo2">📄 Gerar Resumo Ficha (PDF)</a>
+        -->
+        <a id="btn-resumo-misto" href="#" target="_blank" class="btn-report btn-resumo3">📄 Gerar Resumo Misto (PDF)</a>
+        <a id="btn-relatorio-completo" href="#" target="_blank" class="btn-report btn-relatorio-completo">📄 Relatório Completo</a>
+        
+        <a href="index.html" class="btn-report btn-voltar">Voltar para a tela inicial</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const rip = urlParams.get('rip');
+        const modo = urlParams.get('modo');
+
+        if (modo === 'edicao') {
+            // Modo edição: registro provisório não possui relatório de solicitações
+            document.getElementById('btn-relatorio-solicitacoes').style.display = 'none';
+        }
+
+        if (rip) {
+            if (modo !== 'edicao') {
+                document.getElementById('btn-relatorio-solicitacoes').href = `relatorio.html?rip=${rip}`;
+            }
+            // Botões "Resumo Completo" e "Resumo Ficha" desativados (HTML comentado)
+            // document.getElementById('btn-resumo-completo').href = `resumo.html?rip=${rip}`;
+            // document.getElementById('btn-resumo-ficha').href = `resumo2.html?rip=${rip}`;
+            document.getElementById('btn-resumo-misto').href = `resumo3.html?rip=${rip}`;
+            document.getElementById('btn-relatorio-completo').href = `relatorio-completo.html?rip=${rip}`;
+        }
+    </script>
+</body>
+</html>

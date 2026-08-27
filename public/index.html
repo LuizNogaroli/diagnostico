@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Caracterização</title>
+    <link rel="stylesheet" href="styles-forms.css?v=20260819b">
+    <link rel="stylesheet" href="hints.css">
+    <style>
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        
+        .search-container {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+        }
+        
+        .btn-modern {
+            padding: 0 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-modern:active {
+            transform: translateY(0);
+        }
+        .btn-search {
+            background: linear-gradient(135deg, #003d80 0%, #00285c 100%);
+            color: white;
+        }
+        .btn-create {
+            background: linear-gradient(135deg, #003d80 0%, #00285c 100%);
+            color: white;
+        }
+        .search-input-modern {
+            height: 46px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            padding: 0 16px;
+            font-size: 16px;
+            width: 300px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+            color: #334155;
+            font-family: inherit;
+        }
+        .search-input-modern:focus {
+            border-color: #0056b3;
+            background-color: #ffffff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        }
+        .search-label-modern {
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 14px;
+        }
+        .base-option {
+            transition: all 0.2s;
+        }
+        .base-option:has(input:checked) {
+            border-color: #0056b3 !important;
+            background-color: #0056b3 !important;
+            color: white !important;
+        }
+        .base-option:hover {
+            border-color: #93c5fd;
+        }
+        
+        .stepper-menu a {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stepper-menu a.completed { background: #28a745 !important; color: white !important; }
+        .stepper-menu a.active-step { box-shadow: 0 0 0 4px rgba(0,86,179,0.3); }
+        
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            right: 30px;
+            bottom: 30px;
+            font-size: 17px;
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>DIAGNÓSTICO DO IMÓVEL</h2>
+        
+        <!-- BUSCA POR RIP -->
+        <div id="busca-rip-container" class="search-container" style="flex-direction: column; align-items: stretch; background: linear-gradient(135deg, #e8f0fe 0%, #dbeafe 100%); border: 1px solid #93c5fd;">
+            <label class="search-label-modern" style="font-size: 15px; color: #1e3a8a;">🔍 Selecione a base de dados e consulte o imóvel:</label>
+            
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0;">
+                <label style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: #003d80; color: white; border: 2px solid #003d80; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" class="base-option" data-base="SPIUnet">
+                    <input type="radio" name="base_dados" value="SPIUnet" style="accent-color: #ffffff;"> SPIUnet
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: #003d80; color: white; border: 2px solid #003d80; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" class="base-option" data-base="SIAPA">
+                    <input type="radio" name="base_dados" value="SIAPA" style="accent-color: #ffffff;"> SIAPA
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: #003d80; color: white; border: 2px solid #003d80; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" class="base-option" data-base="CIDI">
+                    <input type="radio" name="base_dados" value="CIDI" style="accent-color: #ffffff;"> CIDI
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: #003d80; color: white; border: 2px solid #003d80; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" class="base-option" data-base="SARP">
+                    <input type="radio" name="base_dados" value="SARP" style="accent-color: #ffffff;"> SARP
+                </label>
+            </div>
+
+            <div id="campo-busca-rip" style="display: none; margin-top: 8px;">
+                <div style="display: flex; align-items: flex-end; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; flex: 1;">
+                        <label id="label-rip-busca" for="search_rip" class="search-label-modern" style="color: #1e3a8a;">Número do RIP:</label>
+                        <input type="text" id="search_rip" class="search-input-modern" style="width: 100%;" placeholder="Digite o RIP...">
+                    </div>
+                    <button id="btn-buscar-rip" class="btn-modern btn-search">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        Pesquisar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEPARADOR -->
+        <div style="text-align: center; margin: 30px 0; position: relative;">
+            <hr style="border: none; border-top: 1px solid #e2e8f0;">
+            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 0 15px; color: #64748b; font-size: 14px;">OU</span>
+        </div>
+
+        <!-- NOVO CADASTRO -->
+        <div class="search-container" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #86efac;">
+            <div style="display: flex; flex-direction: column; flex: 1;">
+                <label class="search-label-modern" style="color: #166534;">Imóvel sem RIP</label>
+                <p style="margin: 5px 0 0 0; font-size: 13px; color: #166534;">Inicie um novo diagnóstico para imóvel ainda não cadastrado no sistema.</p>
+            </div>
+            <button id="btn-novo-cadastro" class="btn-modern btn-create">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Iniciar Diagnóstico
+            </button>
+        </div>
+
+        <div id="alert-message" style="margin-bottom: 20px; font-weight: bold; color: #0056b3; text-align: center;"></div>
+        <!-- MENU BOLINHAS -->
+                
+        <form id="form-diagnostico" novalidate >
+            <!-- Hidden RIP field to bind the form submission -->
+            <input type="hidden" id="rip" name="rip" value="">
+
+            
+        <div class="wizard-step" id="step-0">
+                <hr>
+                <h3>SITUAÇÃO CADASTRAL</h3>
+
+                <div class="form-group" style="background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px;">
+                    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Base de Dados:</label>
+                            <div id="sistema-exibicao" style="font-size: 16px; font-weight: 700; color: #1e3a8a; margin-top: 4px;">—</div>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Nº do Registro:</label>
+                            <div id="rip-exibicao" style="font-size: 16px; font-weight: 700; color: #1e3a8a; margin-top: 4px;">—</div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="sistema" id="sistema-hidden">
+                </div>
+
+                <div class="form-actions" style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button type="button" class="btn-primary" onclick="localStorage.removeItem('spu_current_rip'); window.location.href='index.html'" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">◄ Início</button>
+                    <button type="button" class="btn-primary btn-save-next" data-next="1" style="padding: 10px 20px; font-size: 14px; cursor: pointer; border-radius: 5px; background: #0056b3; color: white; border: none;">Salvar Parcial e Avançar ➔ </button>
+                    <button type="button" class="btn-secondary btn-next-only" onclick="goToStep(1)" style="padding: 10px 20px; font-size: 14px; cursor: pointer; border-radius: 5px; background: #6c757d; color: white; border: none; display: none;">Avançar ➔</button>
+                </div>
+            </div>
+
+            
+        </form>
+    </div>
+    
+    <div id="toast" class="toast">Salvo com sucesso!</div>
+
+    <script src="scripts.js?v=20260824a"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radios = document.querySelectorAll('input[name="base_dados"]');
+            const campoBusca = document.getElementById('campo-busca-rip');
+            const labelRip = document.getElementById('label-rip-busca');
+            const inputRip = document.getElementById('search_rip');
+
+            const labels = {
+                'SPIUnet': { label: 'Número do RIP:', placeholder: 'Digite o RIP do SPIUnet...' },
+                'SIAPA':   { label: 'Número do RIP:', placeholder: 'Digite o RIP do SIAPA...' },
+                'CIDI':    { label: 'Número do NBP:', placeholder: 'Digite o NBP do CIDI...' },
+                'SARP':    { label: 'Número do Contrato:', placeholder: 'Digite o contrato do SARP...' }
+            };
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const cfg = labels[this.value];
+                    if (cfg) {
+                        labelRip.innerText = cfg.label;
+                        inputRip.placeholder = cfg.placeholder;
+                        inputRip.value = '';
+                        campoBusca.style.display = 'block';
+                        inputRip.focus();
+                    }
+                });
+            });
+
+            const baseOptions = document.querySelectorAll('.base-option');
+            baseOptions.forEach(opt => {
+                const radio = opt.querySelector('input[type="radio"]');
+                radio.addEventListener('change', function() {
+                    baseOptions.forEach(o => {
+                        o.style.borderColor = '#e2e8f0';
+                        o.style.backgroundColor = '';
+                    });
+                    if (this.checked) {
+                        opt.style.borderColor = '#0056b3';
+                        opt.style.backgroundColor = '#eff6ff';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico do Imóvel</title>
+    <link rel="stylesheet" href="styles-forms.css?v=20260819b">
+    <link rel="stylesheet" href="hints.css">
+    <style>
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        
+        .search-container {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+        }
+        
+        .stepper-menu a {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stepper-menu a.completed { background: #28a745 !important; color: white !important; }
+        .stepper-menu a.active-step { box-shadow: 0 0 0 4px rgba(0,86,179,0.3); }
+        
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            right: 30px;
+            bottom: 30px;
+            font-size: 17px;
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>DIAGNÓSTICO DO IMÓVEL</h2>
+        
+        <!-- BUSCA POR RIP -->
+                <!-- BUSCA POR RIP MOVIDA PARA INDEX.HTML -->
+        <div id="alert-message" style="margin-bottom: 20px; font-weight: bold; color: #0056b3; text-align: center;"></div>
+        <!-- MENU BOLINHAS -->
+                        <div id="stepper" class="stepper-menu" style="display: none; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <a onclick="goToStep(1)" id="indicator-1" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="1. DADOS DO IMÓVEL">1</a>
+            <a onclick="goToStep(2)" id="indicator-2" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="2. SITUAÇÃO CARTORIAL">2</a>
+            <a onclick="goToStep(3)" id="indicator-3" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="3. SITUAÇÃO URBANÍSTICA">3</a>
+            <a onclick="goToStep(4)" id="indicator-4" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="4. AFETAÇÕES">4</a>
+            <a onclick="goToStep(5)" id="indicator-5" style="width: 35px; height: 35px; border-radius: 50%; background: #e9ecef; color: #0056b3; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none;" title="5. ENCAMINHAMENTOS">5</a>
+        </div>
+        <form id="form-diagnostico" novalidate >
+            <!-- Hidden RIP field to bind the form submission -->
+            <input type="hidden" id="rip" name="rip" value="">
+
+            
+        <div class="wizard-step" id="step-5">
+                <hr>
+                <h3 class="section-label">ENCAMINHAMENTOS</h3>
+                
+                <div class="form-group">
+                   <label>Selecione as opções pertinentes:</label>
+                   <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 8px;">
+                       <label><input type="checkbox" name="enc_diligencias"> Necessidade de realização de diligências externas ou internas.</label>
+                       <label><input type="checkbox" name="enc_ajustes"> Necessidade de elaboração ou realização de ajustes nas peças técnicas.</label>
+                       <label><input type="checkbox" name="enc_analise"> Elaboração de análise técnica de incorporação</label>
+                   </div>
+                </div>
+
+                <div class="form-group">
+                   <label for="enc_informacoes_complementares">Informações Complementares:</label>
+                   <textarea id="enc_informacoes_complementares" name="enc_informacoes_complementares" rows="4" placeholder="Insira informações complementares aqui..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="assinatura">Assinatura (Nome / Cargo / Data):</label>
+                    <textarea id="assinatura" name="assinatura" rows="3" placeholder="Data:&#10;Nome:&#10;Cargo:"></textarea>
+                </div>
+
+                <div class="form-actions" style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <button type="button" class="btn-primary" onclick="goToStep(4)" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">◄ Voltar</button>
+                    <div>
+                        <button type="button" id="btn-final-submit" class="btn-primary" style="padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; background: #28a745; color: white; border: none;">Salvar e Concluir Diagnóstico</button>
+                    </div>
+                </div>
+            </div>
+        
+        </form>
+    </div>
+    
+    <div id="toast" class="toast">Salvo com sucesso!</div>
+
+    <script src="scripts.js?v=20260824a"></script>
+</body>
+</html>

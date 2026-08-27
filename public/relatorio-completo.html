@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Completo do Diagnóstico do Imóvel</title>
+    <style>
+        /* Base do resumo3.html (Resumo Misto) + seção de inconsistências do relatorio.html
+           Classes do bloco de solicitações renomeadas com prefixo "sol-" para evitar conflito */
+        @media screen, print {
+            body {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f8fafc;
+                margin: 0;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .report-container {
+                width: 100%;
+                max-width: 900px;
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            }
+
+            .report-header {
+                text-align: center;
+                border-bottom: 3px solid #1a4e8a;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                width: 100%;
+            }
+
+            .report-header h1 {
+                margin: 10px 0;
+                color: #1a4e8a;
+                font-size: 1.8rem;
+                text-transform: uppercase;
+            }
+
+            .report-header p {
+                margin: 5px 0;
+                font-size: 1rem;
+                color: #64748b;
+            }
+
+            .report-section {
+                margin-bottom: 30px;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .report-section-title {
+                background-color: #f1f5f9;
+                padding: 12px 20px;
+                border-bottom: 1px solid #e2e8f0;
+                font-weight: 700;
+                color: #1e3a8a;
+                font-size: 1.1rem;
+                text-transform: uppercase;
+            }
+
+            .section-fields {
+                padding: 16px 20px;
+            }
+
+            .field-row {
+                display: flex;
+                align-items: baseline;
+                margin-bottom: 6px;
+                font-size: 0.9rem;
+            }
+
+            .field-label {
+                width: 260px;
+                font-weight: 600;
+                color: #334155;
+                flex-shrink: 0;
+            }
+
+            .field-value {
+                flex: 1;
+                margin-left: 6px;
+                padding: 3px 10px;
+                background: #f1f5f9;
+                border-radius: 3px;
+                word-break: break-word;
+                white-space: pre-wrap;
+                min-height: 1.4rem;
+            }
+
+            .field-value.empty {
+                color: #94a3b8;
+                font-style: italic;
+            }
+
+            /* ===== Seção de Inconsistências Cadastrais (de relatorio.html) ===== */
+            .sol-intro {
+                font-size: 0.9rem;
+                color: #64748b;
+                padding: 12px 20px 0 20px;
+            }
+
+            .sol-card {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 16px 20px 20px 20px;
+            }
+
+            .sol-card h3 {
+                margin-top: 0;
+                color: #495057;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .sol-badge {
+                background: #ffc107;
+                color: #000;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            .sol-field-row {
+                margin-bottom: 10px;
+            }
+
+            .sol-label {
+                font-weight: bold;
+                color: #6c757d;
+                display: inline-block;
+                width: 120px;
+            }
+
+            .sol-value-old {
+                text-decoration: line-through;
+                color: #dc3545;
+            }
+
+            .sol-value-new {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            .sol-justificativa {
+                background: #f8f9fa;
+                padding: 15px;
+                border-left: 4px solid #0056b3;
+                margin-top: 15px;
+                font-style: italic;
+            }
+
+            .sol-arquivo {
+                padding: 4px 8px;
+                background: #28a745;
+                color: white;
+                border-radius: 4px;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: bold;
+                margin: 0 6px 6px 0;
+                display: inline-block;
+            }
+
+            .badge-file {
+                display: inline-flex;
+                align-items: center;
+                background: #eff6ff;
+                color: #2563eb;
+                padding: 4px 12px;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                border: 1px solid #dbeafe;
+                margin-top: 4px;
+                text-decoration: none;
+            }
+
+            .btn-print {
+                background: #1e40af;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 20px;
+            }
+
+            .btn-print:hover { background: #1e3a8a; }
+
+            @media print {
+                body { background: white; padding: 0; }
+                .report-container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; }
+                .btn-print { display: none; }
+                .report-section, .sol-card { break-inside: avoid; }
+                .field-value, .report-section-title { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">
+        Imprimir Relatório Completo (PDF)
+    </button>
+
+    <div class="report-container">
+        <header class="report-header">
+            <p>Ministério da Gestão e da Inovação em Serviços Públicos</p>
+            <p>Secretaria de Patrimônio da União - SPU</p>
+            <h1>Diagnóstico e Caracterização do Imóvel</h1>
+            <p id="rip-header">RIP: Carregando...</p>
+        </header>
+
+        <div id="sections-container"></div>
+
+        <!-- Parte 2: Inconsistências Cadastrais (conteúdo do relatorio.html) -->
+        <div class="report-section">
+            <div class="report-section-title">10. Inconsistências Cadastrais (Solicitações de Alteração)</div>
+            <div id="solicitacoes-container">
+                <p class="sol-intro">Buscando solicitações...</p>
+            </div>
+        </div>
+
+        <footer style="margin-top: 40px; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            Documento gerado automaticamente pelo Sistema de Diagnóstico SPU em <span id="generation-date"></span>
+        </footer>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+        const urlParams = new URLSearchParams(window.location.search);
+        const rip = urlParams.get('rip');
+
+        document.getElementById('generation-date').innerText = new Date().toLocaleString('pt-BR');
+
+        // ============================================================
+        // PARTE 1: Diagnóstico (conteúdo do resumo3.html)
+        // ============================================================
+        const sectionMap = [
+            {
+                title: "1. Situação Cadastral",
+                fields: [
+                    { label: "Sistema", key: "sistema" },
+                    { label: "RIP SPIUnet", key: "sistema_spiu_rip" },
+                    { label: "RIP SIAPA", key: "sistema_siapa_rip" },
+                    { label: "NBP CIDI", key: "sistema_cidi_nbp" },
+                    { label: "Contrato SARP", key: "sistema_sarp_contrato" }
+                ]
+            },
+            {
+                title: "2. Situação Cartorial",
+                fields: [
+                    { label: "Registro Cartorial", key: "reg_cartorial" },
+                    { label: "Detalhes Matrícula", key: "reg_matricula_detalhes" },
+                    { label: "Detalhes Transcrição", key: "reg_transcricao_detalhes" },
+                    { label: "Matrícula Individualizada", key: "mat_individualizada" },
+                    { label: "Circunscrições atuais e anteriores", key: "circunscricoes", full: true },
+                    { label: "Titularidade", key: "titularidade" },
+                    { label: "Outros Titulares", key: "titularidade_outros" }
+                ]
+            },
+            {
+                title: "3. Dados do Imóvel",
+                fields: [
+                    { label: "Processo SEI", key: "processo" },
+                    { label: "Identificação/Endereço", key: "identificacao", full: true },
+                    { label: "Coordenadas", key: "coordenadas" },
+                    { label: "Tipo de Imóvel", key: "tipo_imovel" },
+                    { label: "Natureza", key: "natureza" },
+                    { label: "Inscrição Municipal", key: "inscricao_municipal" },
+                    { label: "CCIR", key: "ccir" },
+                    { label: "Conceituação", key: "conceituacao" },
+                    { label: "Especificação (Água)", key: "conceituacao_agua_especificar" },
+                    { label: "Classificação", key: "classificacao" },
+                    { label: "Uso Especificar", key: "classificacao_uso_especificar" },
+                    { label: "Área do Terreno", key: "area_terreno" },
+                    { label: "Área Construída", key: "area_construcao" },
+                    { label: "Informações Complementares", key: "observacoes1", full: true }
+                ]
+            },
+            {
+                title: "4. Situação Urbanística",
+                fields: [
+                    { label: "Loteamento", key: "loteamento" },
+                    { label: "Detalhes Loteamento", key: "loteamento_detalhes", full: true },
+                    { label: "Planta Loteamento SEI", key: "planta_sei" },
+                    { label: "Zoneamento Municipal", key: "zoneamento" },
+                    { label: "Informações Complementares", key: "urb_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "5. Situação Dominial",
+                fields: [
+                    { label: "Forma de Aquisição", key: "aquisicao" },
+                    { label: "Outra Forma", key: "aquisicao_outra" },
+                    { label: "Informações Complementares", key: "dom_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "6. Caracterização",
+                fields: [
+                    { label: "Demarcação", key: "demarcacao" },
+                    { label: "Estágio Demarcação", key: "demarcacao_estagio" },
+                    { label: "Identificação Direta", key: "id_direta" },
+                    { label: "Relatório SEI (IDD)", key: "idd_relatorio" },
+                    { label: "Estágio IDD", key: "idd_estagio" },
+                    { label: "Memorial Descritivo", key: "memorial", full: true }
+                ]
+            },
+            {
+                title: "7. Afetações e Interferências",
+                fields: [
+                    { label: "Faixa de Fronteira", key: "interf_fronteira", bool: true },
+                    { label: "Faixa de Segurança", key: "interf_seguranca", bool: true },
+                    { label: "1.320 metros (estab. militares)", key: "interf_1320m", bool: true },
+                    { label: "Faixa de 100 metros (orla)", key: "interf_100m", bool: true },
+                    { label: "Faixa de Domínio Ferrovia/Rodovia", key: "interf_dominio", bool: true },
+                    { label: "Unidade de Conservação", key: "afet_uc", bool: true },
+                    { label: "Tipo UC", key: "uc_tipo" },
+                    { label: "Terra Indígena", key: "afet_indigena", bool: true },
+                    { label: "Comunidades Tradicionais", key: "afet_tradicionais", bool: true },
+                    { label: "Território Quilombola", key: "afet_quilombolas", bool: true },
+                    { label: "Poligonal de Porto Organizado", key: "afet_porto", bool: true },
+                    { label: "PDISP", key: "afet_pdisp", bool: true },
+                    { label: "Regularização Fundiária/REURB", key: "afet_reurb", bool: true },
+                    { label: "Operacional RFFSA", key: "afet_rffsa", bool: true },
+                    { label: "Tombado Patrimônio Histórico", key: "afet_tombado", bool: true },
+                    { label: "Tipo Tombamento", key: "tom_tipo" },
+                    { label: "Outro", key: "afet_outro", bool: true },
+                    { label: "Especificar Outro", key: "afet_outro_espec" },
+                    { label: "Informações Complementares", key: "afet_informacoes_complementares", full: true }
+                ]
+            },
+            {
+                title: "8. Encaminhamentos",
+                fields: [
+                    { label: "Diligências Externas/Internas", key: "enc_diligencias", bool: true },
+                    { label: "Ajustes nas Peças Técnicas", key: "enc_ajustes", bool: true },
+                    { label: "Análise Técnica de Incorporação", key: "enc_analise", bool: true },
+                    { label: "Informações Complementares", key: "enc_informacoes_complementares", full: true },
+                    { label: "Assinatura (Nome/Cargo/Data)", key: "assinatura", full: true }
+                ]
+            }
+        ];
+
+        const fileKeys = [
+            { label: "Fotos do Imóvel", key: "imagem" },
+            { label: "Planta PDF", key: "planta_pdf" },
+            { label: "Planta Loteamento SEI (PDF)", key: "planta_sei_pdf" },
+            { label: "Arquivo Vetorial", key: "vetorial" }
+        ];
+
+        function formatValue(val, isBool) {
+            if (isBool) return val == 1 ? "SIM" : "NÃO";
+            if (val === null || val === undefined || String(val).trim() === "") {
+                return '<span class="empty">-</span>';
+            }
+            return String(val);
+        }
+
+        function renderFiles(data) {
+            let html = `
+                <div class="report-section">
+                    <div class="report-section-title">9. Anexos e Documentos</div>
+                    <div class="section-fields">
+            `;
+            fileKeys.forEach(f => {
+                let filesMarkup = '<span class="empty">-</span>';
+                if (data[f.key]) {
+                    try {
+                        const files = JSON.parse(data[f.key]);
+                        if (files.length > 0) {
+                            filesMarkup = files.map(p => {
+                                const name = p.split(/[/\\]/).pop();
+                                const url = '/' + p.replace(/\\/g, '/').replace(/^\/+/, '');
+                                return `<a class="badge-file" href="${url}" target="_blank">${name}</a>`;
+                            }).join(' ');
+                        }
+                    } catch (e) {}
+                }
+                html += `
+                    <div class="field-row">
+                        <span class="field-label">${f.label}:</span>
+                        <span class="field-value">${filesMarkup}</span>
+                    </div>
+                `;
+            });
+            html += '</div></div>';
+            return html;
+        }
+
+        // ============================================================
+        // PARTE 2: Solicitações de Alteração (conteúdo do relatorio.html)
+        // ============================================================
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function carregarDiagnostico() {
+            fetch(`${BASE_URL}/api/diagnostico/${encodeURIComponent(rip)}`)
+                .then(res => res.json())
+                .then(result => {
+                    const container = document.getElementById('sections-container');
+                    container.innerHTML = '';
+
+                    if (result.success) {
+                        const data = result.data;
+
+                        sectionMap.forEach(section => {
+                            let sectionHtml = `
+                                <div class="report-section">
+                                    <div class="report-section-title">${section.title}</div>
+                                    <div class="section-fields">
+                            `;
+                            section.fields.forEach(field => {
+                                sectionHtml += `
+                                    <div class="field-row">
+                                        <span class="field-label">${field.label}:</span>
+                                        <span class="field-value">${formatValue(data[field.key], field.bool)}</span>
+                                    </div>
+                                `;
+                            });
+                            sectionHtml += '</div></div>';
+                            container.innerHTML += sectionHtml;
+                        });
+
+                        container.innerHTML += renderFiles(data);
+                    } else {
+                        container.innerHTML = '<p style="color:red; text-align:center; padding: 20px;">RIP não encontrado na base de dados.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center; padding: 20px;">Erro ao carregar dados do servidor.</p>';
+                });
+        }
+
+        function carregarSolicitacoes() {
+            fetch(`${BASE_URL}/api/solicitacoes/${encodeURIComponent(rip)}`)
+                .then(res => res.json())
+                .then(result => {
+                    const container = document.getElementById('solicitacoes-container');
+                    container.innerHTML = '';
+
+                    if (result.success && result.data.length > 0) {
+                        result.data.forEach(sol => {
+                            const date = new Date(sol.data_hora).toLocaleString('pt-BR');
+                            const isNota = !sol.valor_atual;
+                            let arquivosHtml = '';
+                            if (sol.arquivos) {
+                                let arr = [];
+                                try { arr = JSON.parse(sol.arquivos); } catch (e) {}
+                                if (arr.length > 0) {
+                                    const links = arr.map(fp => {
+                                        const filename = fp.split(/[/\\]/).pop();
+                                        const viewUrl = '/' + fp.replace(/\\/g, '/').replace(/^\/+/, '');
+                                        return `<a href="${viewUrl}" target="_blank" class="sol-arquivo">📎 ${esc(filename)}</a>`;
+                                    }).join('');
+                                    arquivosHtml = `<div class="sol-field-row" style="margin-top: 10px;"><span class="sol-label">Arquivos:</span> <div style="display:inline;">${links}</div></div>`;
+                                }
+                            }
+                            const card = `
+                                <div class="sol-card">
+                                    <h3>${esc(sol.campo_nome)} <span class="sol-badge">PENDENTE</span></h3>
+                                    <div class="sol-field-row"><span class="sol-label">Data/Hora:</span> ${esc(date)}</div>
+                                    ${isNota ? `
+                                        <div class="sol-justificativa" style="background: #fff8e1; border-left: 4px solid #ffc107;">
+                                            <strong>Solicitação:</strong><br>
+                                            ${esc(sol.novo_valor).replace(/\n/g, '<br>')}
+                                        </div>
+                                    ` : `
+                                        <div class="sol-field-row"><span class="sol-label">Valor Atual:</span> <span class="sol-value-old">${esc(sol.valor_atual)}</span></div>
+                                        <div class="sol-field-row"><span class="sol-label">Novo Valor:</span> <span class="sol-value-new">${esc(sol.novo_valor)}</span></div>
+                                        <div class="sol-justificativa">
+                                            <strong>Justificativa:</strong><br>
+                                            ${esc(sol.justificativa).replace(/\n/g, '<br>')}
+                                        </div>
+                                        <div class="sol-justificativa" style="background: #eef2f5; border-left: 4px solid #17a2b8;">
+                                            <strong>Fundamentação Legal:</strong><br>
+                                            ${esc(sol.fundamentacao).replace(/\n/g, '<br>')}
+                                        </div>
+                                    `}
+                                    ${arquivosHtml}
+                                </div>
+                            `;
+                            container.innerHTML += card;
+                        });
+                    } else {
+                        container.innerHTML = '<p class="sol-intro">Nenhuma solicitação de alteração encontrada para este RIP.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('solicitacoes-container').innerHTML = '<p class="sol-intro" style="color:red;">Erro ao buscar dados.</p>';
+                });
+        }
+
+        if (rip) {
+            document.getElementById('rip-header').innerText = `Imóvel RIP nº ${rip}`;
+            carregarDiagnostico();
+            carregarSolicitacoes();
+        } else {
+            document.getElementById('sections-container').innerHTML = '<p style="color:red; text-align:center; padding: 20px;">RIP não especificado.</p>';
+            document.getElementById('solicitacoes-container').innerHTML = '';
+        }
+    </script>
+
+</body>
+</html>

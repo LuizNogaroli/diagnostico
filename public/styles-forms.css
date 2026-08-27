@@ -1,0 +1,1385 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   styles-forms.css
+   Estilos compartilhados por todos os formulários FOCO/SPU
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Correção global de box-sizing ─────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ── Estilos gerais do body ─────────────────────────────────────────────── */
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px 0;
+    margin: 0;
+}
+
+/* ── Container do formulário ────────────────────────────────────────────── */
+
+.form-container {
+    width: 100%;
+    max-width: 960px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Títulos ────────────────────────────────────────────────────────────── */
+
+h2 {
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 30px;
+}
+
+h3 {
+    text-align: center;
+    color: #007bff;
+    margin: 5px 0 50px 0;
+    font-size: 0.8em;
+}
+
+/* ============================================================
+   DOCUMENTOS ANEXADOS / LINKADOS
+   ============================================================ */
+
+.documentos-linkados-section {
+    max-width: 100%;
+    margin: 18px 0 22px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    box-shadow: none;
+    overflow-x: hidden;
+}
+
+.documentos-linkados-section,
+.documentos-linkados-section * {
+    box-sizing: border-box;
+}
+
+/* Header antigo — mantido para compatibilidade com outros formulários */
+
+.documentos-linkados-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 14px;
+}
+
+.documentos-linkados-header > div {
+    min-width: 0;
+}
+
+.documentos-linkados-header h3 {
+    margin: 0;
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #12395b;
+}
+
+.documentos-linkados-header p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: #5f6b7a;
+}
+
+.documentos-linkados-badge {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: #12395b;
+    font-size: 0.82rem;
+    font-weight: 800;
+    border: 1px solid #93c5fd;
+}
+
+/* ── Componente expansível/recolhível de documentos ────────────────────── */
+
+.documentos-expansivel {
+    width: 100%;
+}
+
+/* Cabeçalho da sanfona no estilo azul institucional */
+.documentos-expansivel-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+
+    width: 100%;
+    cursor: pointer;
+
+    padding: 14px 18px;
+    background: #1e3f66;
+    border: 1px solid #173454;
+    border-radius: 8px;
+
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+
+    list-style: none;
+    user-select: none;
+
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+    transition: background 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
+}
+
+.documentos-expansivel-header:hover {
+    background: #17375a;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.22);
+}
+
+.documentos-expansivel-header::-webkit-details-marker {
+    display: none;
+}
+
+.documentos-expansivel-header::marker {
+    content: "";
+}
+
+/* Título da sanfona */
+.documentos-expansivel-header span:first-of-type {
+    min-width: 0;
+    color: #ffffff;
+}
+
+/* Badge de quantidade dentro do cabeçalho azul */
+.documentos-expansivel-header .documentos-linkados-badge {
+    justify-self: end;
+    align-self: center;
+
+    padding: 5px 12px;
+    border-radius: 999px;
+
+    background: #dbeafe;
+    color: #12395b;
+    border: 1px solid #93c5fd;
+
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Seta à direita */
+.documentos-expansivel-header::after {
+    content: "▲";
+    justify-self: end;
+    align-self: center;
+
+    color: #ffffff;
+    font-size: 0.85rem;
+    line-height: 1;
+
+    transition: transform 0.2s ease;
+}
+
+/* Quando fechado, seta aponta para baixo */
+.documentos-expansivel:not([open]) .documentos-expansivel-header::after {
+    transform: rotate(180deg);
+}
+
+/* Quando aberto, arredonda somente o topo */
+.documentos-expansivel[open] .documentos-expansivel-header {
+    border-radius: 8px 8px 0 0;
+}
+
+/* ── Card e tabela de documentos ───────────────────────────────────────── */
+
+.documentos-linkados-card {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.documentos-expansivel .documentos-linkados-card {
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+}
+
+.documentos-linkados-table {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.documentos-linkados-table thead th {
+    padding: 12px 14px;
+    background: #eef4fb;
+    color: #243b53;
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 1px solid #d8e1ef;
+}
+
+.documentos-linkados-table tbody td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #edf2f7;
+    color: #2d3748;
+    font-size: 0.92rem;
+    vertical-align: middle;
+}
+
+.documentos-linkados-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.documentos-linkados-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+/* Tabela simplificada com 2 colunas */
+
+.documentos-table-simplificada th:nth-child(1),
+.documentos-table-simplificada td:nth-child(1),
+.documentos-linkados-table th:nth-child(1),
+.documentos-linkados-table td:nth-child(1) {
+    width: 78%;
+}
+
+.documentos-table-simplificada th:nth-child(2),
+.documentos-table-simplificada td:nth-child(2),
+.documentos-linkados-table th:nth-child(2),
+.documentos-linkados-table td:nth-child(2) {
+    width: 22%;
+}
+
+.documentos-linkados-table th,
+.documentos-linkados-table td {
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.doc-nome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.doc-nome > div {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.doc-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    min-width: 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #eef4ff;
+    font-size: 1.05rem;
+}
+
+.doc-nome strong {
+    display: block;
+    max-width: 100%;
+    color: #1f2937;
+    font-size: 0.94rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.doc-nome small {
+    display: block;
+    max-width: 100%;
+    margin-top: 2px;
+    color: #718096;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+/* Classes antigas de tipo — mantidas para compatibilidade */
+
+.tipo-doc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    max-width: 100%;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    white-space: normal;
+    text-align: center;
+}
+
+.tipo-pdf {
+    background: #fff1f1;
+    color: #b42318;
+    border-color: #ffd0d0;
+}
+
+.tipo-img {
+    background: #eefdf3;
+    color: #087443;
+    border-color: #bdebd0;
+}
+
+.tipo-consulta {
+    background: #fff8e6;
+    color: #8a5a00;
+    border-color: #f5d58b;
+}
+
+.coluna-acao {
+    width: auto;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.btn-link-doc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    padding: 7px 11px;
+    border-radius: 8px;
+    background: #1d70b8;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-link-doc:hover {
+    background: #155a93;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(29, 112, 184, 0.25);
+}
+
+.btn-link-doc:focus {
+    outline: 3px solid rgba(29, 112, 184, 0.25);
+    outline-offset: 2px;
+}
+
+/* ── Grupos de formulário ───────────────────────────────────────────────── */
+
+/* Padrão: campo preenchido externamente — fundo cinza claro */
+.form-group {
+    margin-bottom: 12px;
+    background-color: #eef4ff;
+    border-radius: 6px;
+    padding: 6px 12px;
+    border-left: 4px solid #1e3a8a;
+}
+
+/* Exceção: campo editável pelo usuário → fundo azul suave */
+.form-group.editavel {
+    background-color: #eef4ff;
+    border-left: 4px solid #1e3a8a;
+}
+
+/* Destaque do box de solicitação de alteração cadastral */
+.form-group.solicitacao-box {
+    background-color: #fef3c7 !important;
+    border: 1px solid #f59e0b !important;
+    border-left-width: 4px !important;
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+body.modo-consulta .form-group.solicitacao-box textarea {
+    background-color: #ffffff !important;
+}
+
+/* ── Formulário Inline — label na mesma linha do input ─────────────────── */
+
+.form-group.inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    background-color: transparent;
+    border-left: none;
+    margin-bottom: 0;
+    padding: 4px 12px;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.form-group.inline > label {
+    flex: 0 0 35%;
+    margin-bottom: 0;
+}
+
+.form-group.inline > input,
+.form-group.inline > select,
+.form-group.inline > .radio-group {
+    flex: 1;
+    width: auto;
+    border: none;
+    background-color: transparent;
+    padding: 4px 0;
+}
+
+.form-group.inline > .error-msg,
+.form-group.inline > .field-hint {
+    flex: 0 0 100%;
+    margin-left: calc(35% + 20px);
+    margin-top: -6px;
+}
+
+/* ── Labels ─────────────────────────────────────────────────────────────── */
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* ── Inputs, selects e textareas ────────────────────────────────────────── */
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* ── Foco nos campos ────────────────────────────────────────────────────── */
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Remove o efeito de foco para manter o visual de texto puro */
+.form-group.inline > input:focus,
+.form-group.inline > select:focus {
+    box-shadow: none;
+}
+
+/* ── Feedback de validação nativo ───────────────────────────────────────── */
+
+input:invalid:not(:placeholder-shown),
+select:invalid:not(:placeholder-shown) {
+    border-color: red;
+}
+
+input:valid:not(:placeholder-shown) {
+    border-color: #28a745;
+}
+
+/* ── Classes de validação via JS ────────────────────────────────────────── */
+
+.field-error {
+    border-color: red !important;
+}
+
+.field-valid {
+    border-color: #28a745 !important;
+}
+
+/* ── Grupo de radio buttons ─────────────────────────────────────────────── */
+
+.radio-group {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+/* ── Radios verticais ───────────────────────────────────────────────────── */
+
+.radio-group--vertical {
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ── Grupo de checkboxes ────────────────────────────────────────────────── */
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+/* ── Erro em grupo de radio/checkbox ────────────────────────────────────── */
+
+.group-error {
+    outline: 2px solid red;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+/* ── Textarea ───────────────────────────────────────────────────────────── */
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* ── Texto pequeno ──────────────────────────────────────────────────────── */
+
+small {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MENSAGENS DE ERRO
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.error-msg {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: none;
+}
+
+.error-msg.visivel {
+    display: block;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BLOCOS CONDICIONAIS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.visivel-nao {
+    display: none !important;
+}
+
+/* ── Grupo de botões ────────────────────────────────────────────────────── */
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.button-group button {
+    min-width: 160px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* ── Botão padrão ───────────────────────────────────────────────────────── */
+
+button {
+    background: #007bff;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+/* ── Botão secundário ───────────────────────────────────────────────────── */
+
+button.btn-secondary {
+    background: #6c757d;
+}
+
+button.btn-secondary:hover {
+    background: #545b62;
+}
+
+/* ── Botão imprimir / salvar PDF ────────────────────────────────────────── */
+
+button.btn-print {
+    background: #5a6a7a;
+    color: #ffffff;
+}
+
+button.btn-print:hover {
+    background: #3d4f5e;
+}
+
+button.btn-print:active {
+    background: #2c3a47;
+}
+
+/* ── Botão "+ Adicionar" ────────────────────────────────────────────────── */
+
+.btn-add {
+    background: none;
+    color: #007bff;
+    border: 1px dashed #007bff;
+    border-radius: 5px;
+    padding: 6px 14px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+
+.btn-add:hover {
+    background: #e8f0ff;
+    transform: none;
+}
+
+/* ── Itens dinâmicos ────────────────────────────────────────────────────── */
+
+.rip-item,
+.imagem-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.rip-item input,
+.imagem-item input {
+    flex: 1;
+}
+
+.btn-remove-rip,
+.btn-remove-imagem {
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.85em;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.btn-remove-rip:hover,
+.btn-remove-imagem:hover {
+    background: #a71d2a;
+    transform: none;
+}
+
+/* ── Layout em linha ────────────────────────────────────────────────────── */
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.form-row .form-group {
+    margin-bottom: 20px;
+}
+
+.col-small {
+    flex: 0 0 80px;
+    min-width: 80px;
+}
+
+.col-medium {
+    flex: 1 1 180px;
+    min-width: 140px;
+}
+
+.col-large {
+    flex: 2 1 280px;
+    min-width: 200px;
+}
+
+.col-half {
+    flex: 1 1 50%;
+    min-width: 140px;
+}
+
+/* ── Responsivo geral ──────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .form-container {
+        margin: 10px;
+        padding: 15px;
+        width: calc(100% - 20px);
+    }
+
+    h2 {
+        font-size: 1.4em;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .col-small,
+    .col-medium,
+    .col-large,
+    .col-half {
+        flex: none;
+        width: 100%;
+    }
+
+    .form-group.inline {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .form-group.inline > label {
+        flex: 1 1 auto;
+    }
+
+    .form-group.inline > .error-msg,
+    .form-group.inline > .field-hint {
+        margin-left: 0;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* ── Responsivo dos documentos ─────────────────────────────────────────── */
+
+@media (max-width: 700px) {
+    .documentos-linkados-section {
+        padding: 0;
+        margin: 16px 0 20px;
+    }
+
+    .documentos-linkados-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .documentos-linkados-badge {
+        align-self: flex-start;
+    }
+
+    .documentos-expansivel-header {
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+
+    .documentos-expansivel-header .documentos-linkados-badge {
+        font-size: 0.76rem;
+        padding: 4px 9px;
+    }
+
+    .documentos-linkados-card {
+        border: none;
+        background: transparent;
+        overflow-x: hidden;
+    }
+
+    .documentos-expansivel .documentos-linkados-card {
+        border-radius: 0 0 8px 8px;
+        padding-top: 10px;
+    }
+
+    .documentos-linkados-table {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .documentos-linkados-table thead {
+        display: none;
+    }
+
+    .documentos-linkados-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .documentos-linkados-table tbody tr {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+    }
+
+    .documentos-linkados-table tbody td {
+        display: flex;
+        width: 100%;
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf2f7;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .documentos-linkados-table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .documentos-linkados-table tbody td::before {
+        flex: 0 0 76px;
+        font-weight: 700;
+        color: #243b53;
+        font-size: 0.8rem;
+    }
+
+    .documentos-linkados-table tbody td:nth-child(1)::before {
+        content: "Nome:";
+    }
+
+    .documentos-linkados-table tbody td:nth-child(2)::before {
+        content: "Acesso:";
+    }
+
+    .documentos-linkados-table th:nth-child(1),
+    .documentos-linkados-table td:nth-child(1),
+    .documentos-linkados-table th:nth-child(2),
+    .documentos-linkados-table td:nth-child(2),
+    .documentos-table-simplificada th:nth-child(1),
+    .documentos-table-simplificada td:nth-child(1),
+    .documentos-table-simplificada th:nth-child(2),
+    .documentos-table-simplificada td:nth-child(2) {
+        width: 100%;
+    }
+
+    .doc-nome {
+        align-items: flex-start;
+        flex: 1;
+    }
+
+    .btn-link-doc {
+        padding: 7px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Ajuste extra para telas muito pequenas */
+
+@media (max-width: 420px) {
+    .documentos-expansivel-header {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+    }
+
+    .documentos-expansivel-header span:first-of-type {
+        grid-column: 1 / 2;
+        grid-row: 1;
+    }
+
+    .documentos-expansivel-header .documentos-linkados-badge {
+        grid-column: 1 / 2;
+        grid-row: 2;
+        justify-self: start;
+        align-self: center;
+    }
+
+    .documentos-expansivel-header::after {
+        grid-column: 2 / 3;
+        grid-row: 1 / 3;
+        justify-self: end;
+        align-self: center;
+    }
+
+    .documentos-linkados-table tbody td {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .documentos-linkados-table tbody td::before {
+        flex: none;
+    }
+
+    .doc-nome {
+        width: 100%;
+    }
+
+    .btn-link-doc {
+        width: 100%;
+    }
+}
+
+/* ── Estilos de impressão ───────────────────────────────────────────────── */
+
+@media print {
+    .button-group,
+    .hint-semaforo,
+    .error-msg {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .form-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .form-group,
+    .form-group.editavel,
+    .documentos-linkados-section,
+    .documentos-expansivel-header,
+    .area-destinada-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ── Texto de origem/fonte do campo ─────────────────────────────────────── */
+
+.campo-origem {
+    font-weight: normal;
+    font-size: 0.85em;
+    color: #6a7a8c;
+    display: block;
+    margin-top: 4px;
+}
+
+/* ── Accordion Sanfona ──────────────────────────────────────────────────── */
+
+.accordion {
+    width: calc(100% - 20px);
+    margin-right: 20px;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f4f8;
+    border: 1px solid #ccc;
+    border-radius: 6px 6px 0 0;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 0;
+}
+
+.accordion-header:hover {
+    background-color: #e2e8f0;
+}
+
+.accordion-icon {
+    display: inline-block;
+    font-size: 1.2em;
+    color: #0056b3;
+    transition: transform 0.3s ease;
+}
+
+.accordion-icon.open {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    display: none;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 20px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+.accordion-content.open {
+    display: block;
+}
+
+/* ═══════════════════════════════════════════════════
+   TÍTULOS DE SEÇÃO — foco-06 e reutilizável
+   ═══════════════════════════════════════════════════ */
+
+.form-section-header {
+    margin: 36px 0 20px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1a4e8a 0%, #1a6bbf 100%);
+    box-shadow: 0 3px 10px rgba(26, 76, 138, 0.18);
+    padding: 14px 20px;
+}
+
+.form-section-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+}
+
+.form-section-header:first-of-type {
+    margin-top: 8px;
+}
+
+/* =====================================================
+   Área a ser destinada — box específico da Etapa 6
+   ===================================================== */
+
+/*
+   Este bloco foi colocado no final propositalmente para sobrescrever
+   os estilos gerais de h3, label, input e form-section.
+*/
+
+.area-destinada-box,
+.form-section.area-destinada-box {
+    display: block;
+    width: 100%;
+    background: #eef4ff;
+    border-left: 4px solid #1e3a8a;
+    border-top: 1px solid #d0dfff;
+    border-right: 1px solid #d0dfff;
+    border-bottom: 1px solid #d0dfff;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* Título interno da caixa */
+.area-destinada-box > h3,
+.form-section.area-destinada-box > h3 {
+    margin: 0 0 16px 0;
+    padding: 0;
+    color: #000000;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: left;
+    border: none;
+    background: transparent;
+}
+
+/* Cada linha: label + input */
+.area-destinada-linha {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.area-destinada-linha:last-child {
+    margin-bottom: 0;
+}
+
+/* Label da área destinada */
+.area-destinada-linha label {
+    flex: 0 0 245px;
+    min-width: 245px;
+    margin: 0;
+    color: #1e293b;
+    font-weight: bold;
+    font-size: 0.95rem;
+    line-height: 1.3;
+}
+
+/* Input da área destinada */
+.area-destinada-linha input {
+    flex: 0 0 220px;
+    width: 220px;
+    max-width: 220px;
+    height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #333;
+    font-size: 16px;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+.area-destinada-linha input::placeholder {
+    color: #64748b;
+    opacity: 1;
+}
+
+.area-destinada-linha input:focus {
+    outline: none;
+    border-color: #1e3a5f;
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.12);
+}
+
+/* Evita que a validação global pinte imediatamente os campos desta caixa */
+.area-destinada-linha input:valid:not(:placeholder-shown),
+.area-destinada-linha input:invalid:not(:placeholder-shown) {
+    border-color: #cbd5e1;
+}
+
+/* Mantém destaque apenas quando houver classe de validação via JS */
+.area-destinada-linha input.field-error {
+    border-color: red !important;
+}
+
+.area-destinada-linha input.field-valid {
+    border-color: #28a745 !important;
+}
+
+/* Responsivo da área destinada */
+@media (max-width: 700px) {
+    .area-destinada-box,
+    .form-section.area-destinada-box {
+        padding: 16px;
+    }
+
+    .area-destinada-linha {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .area-destinada-linha label {
+        flex: none;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .area-destinada-linha input {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+/* --- MODAL E ÍCONE DE SOLICITAÇÃO --- */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(3px); }
+.modal-content { background: #fff; padding: 30px; border-radius: 12px; width: 600px; max-width: 95%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+.readonly-field { background-color: #e9ecef !important; color: #6c757d !important; cursor: not-allowed; border: 1px solid #ced4da; }
+.btn-cancel { padding: 10px 20px; border-radius: 6px; background: #6c757d; color: white; border: none; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+.btn-cancel:hover { background: #5a6268; }
+.icon-edit-request { cursor: pointer; font-size: 16px; margin-left: 8px; color: #0056b3; opacity: 0.7; transition: opacity 0.2s, transform 0.2s; display: inline-block; vertical-align: middle; }
+.icon-edit-request:hover { opacity: 1; transform: scale(1.1); }
+
+/* ── Destaque para campos sem dados na base ────────────────────────────── */
+.missing-data {
+    border: 1px solid red !important;
+}
+
+.form-group.missing-data {
+    border: 1px solid red !important;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Estilo para inputs dentro de grupos com missing-data */
+.form-group.missing-data input:not([type="radio"]):not([type="checkbox"]),
+.form-group.missing-data textarea,
+.form-group.missing-data select {
+    border-color: red !important;
+}
+
+/* Indicador visual para radio buttons e checkboxes */
+.missing-data input[type="radio"],
+.missing-data input[type="checkbox"] {
+    accent-color: red;
+}
+
+.section-label {
+    color: #0056b3;
+    margin: 20px 0 20px 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Aumenta a visibilidade dos checkboxes marcados em Modo Consulta */
+input[type='checkbox']:checked {
+    accent-color: #1e3a8a;
+    outline: 2px solid #1e3a8a;
+    outline-offset: 1px;
+}
+
+/* Garante que checkboxes desabilitados mas marcados tenham contraste adequado */
+input[type='checkbox']:disabled:checked {
+    accent-color: #475569;
+    opacity: 1;
+    outline: 2px solid #475569;
+    outline-offset: 1px;
+}
+
+/* Garante visibilidade total em inputs desabilitados (Modo Consulta) */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    opacity: 1 !important;
+    background-color: #f8fafc !important;
+    color: #334155 !important;
+    border-color: #cbd5e1 !important;
+    cursor: not-allowed;
+}
+
+/* Estilo visual para campos em Modo Consulta (substitui inline styles) */
+.consulta-readonly {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    cursor: default !important;
+    border-color: #ced4da !important;
+}
+
+
+
+
+
+
+/* CSS para simular disabled sem perder estilo visual */
+.consulta-readonly {
+    pointer-events: none;
+    opacity: 1 !important;
+    accent-color: #1e3a8a !important;
+}
+
+
+
+
+/* Estilo padronizado para checkboxes e r�dios */
+.form-custom-input {
+    accent-color: #1e3a8a !important;
+    transform: scale(1.5);
+    outline: none !important;
+    border: none !important;
+}
+
+/* Remove contornos nativos de r�dios/checkboxes */
+input[type='radio'],
+input[type='checkbox'] {
+    outline: none !important;
+    border: none !important;
+}
+
+
+/* Força a cor do texto "Vazio" em campos de consulta */
+.vazio-flag-input {
+    color: red !important;
+    font-weight: normal !important;
+    background-color: #fef2f2 !important;
+    border-color: red !important;
+}
+
+/* Estilo para a flag de texto Vazio */
+.vazio-flag-text {
+    color: red !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+    margin-left: 8px !important;
+}
+
+/* --- Gestão de Estado: Modo Consulta vs Edição --- */
+body.modo-consulta .form-group input:not([type='radio']):not([type='checkbox']):not(.vazio-flag-input),
+body.modo-consulta .form-group textarea:not(.vazio-flag-input):not(#solicitacao_alteracao):not(#enc_informacoes_complementares):not(#dom_informacoes_complementares):not(#urb_informacoes_complementares):not(#afet_informacoes_complementares),
+body.modo-consulta .form-group select:not(.vazio-flag-input) {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    cursor: default !important;
+    border-color: #ced4da !important;
+}
+
+/* Modo consulta: oculta os boxes "Informações Complementares" das etapas 1 a 4
+   (no modo edição o body não recebe .modo-consulta e os boxes permanecem visíveis) */
+body.modo-consulta .form-group.info-complementares-box {
+    display: none !important;
+}
+
+body.modo-consulta .vazio-flag-text {
+    color: red !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+    margin-left: 8px !important;
+}
+
+body.modo-consulta .vazio-flag-input {
+    color: red !important;
+    font-weight: normal !important;
+    background-color: #fef2f2 !important;
+    border-color: red !important;
+}
+
