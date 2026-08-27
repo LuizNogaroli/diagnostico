@@ -401,8 +401,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnFinal = document.getElementById('btn-final-submit');
     if (btnFinal) {
         btnFinal.addEventListener('click', async () => {
-            // Se estiver no modo cadastro, gera número de registro final
-            if (isProvisionalRip && currentRip && currentRip.startsWith('SPU-')) {
+            // Renomeia RIP temporário (SPU-YYYYMMDD-HHMMSS) para definitivo
+            if (currentRip && /^SPU-\d{8}-\d{6}$/.test(currentRip)) {
                 // Gera número de registro definitivo
                 const now = new Date();
                 const year = now.getFullYear();
