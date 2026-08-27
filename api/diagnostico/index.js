@@ -1,5 +1,6 @@
 const supabase = require('../_lib/supabase');
 const { parseMultipart } = require('../_lib/multipart');
+const { DIAGNOSTICO_COLUMNS, filterColumns } = require('../_lib/columns');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,6 +57,8 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ error: 'RIP é obrigatório.' });
             }
 
+            const payload = filterColumns(body, DIAGNOSTICO_COLUMNS);
+
             const { data: existing } = await supabase
                 .from('diagnostico')
                 .select('rip')
@@ -65,13 +68,13 @@ module.exports = async (req, res) => {
             if (existing) {
                 const { error } = await supabase
                     .from('diagnostico')
-                    .update(body)
+                    .update(payload)
                     .eq('rip', rip);
                 if (error) return res.status(500).json({ error: error.message });
             } else {
                 const { error } = await supabase
                     .from('diagnostico')
-                    .insert(body);
+                    .insert(payload);
                 if (error) return res.status(500).json({ error: error.message });
             }
 
