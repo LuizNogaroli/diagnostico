@@ -23,8 +23,8 @@ if (isIndexPage && !urlParams.has('rip')) {
 const currentRip = urlParams.get('rip') || localStorage.getItem('spu_current_rip');
 const isCadastroMode = urlParams.get('modo') === 'cadastro';
 const isEtapaPage = window.location.pathname.includes('etapa-');
-// Registro provisório (ediável): cadastro em andamento (modo=cadastro) ou RIP temporário NOVO-
-const isProvisionalRip = isCadastroMode || (currentRip && currentRip.startsWith('NOVO-'));
+// Registro provisório (ediável): cadastro em andamento (modo=cadastro) ou RIP temporário (SPU-YYYYMMDD-HHMMSS ou NOVO-)
+const isProvisionalRip = isCadastroMode || (currentRip && (currentRip.startsWith('NOVO-') || /^SPU-\d{8}-\d{6}$/.test(currentRip)));
 // Modo do formulário: 'consulta' (RIP definitivo, somente leitura) ou 'edicao' (registro provisório)
 let formMode = isProvisionalRip ? 'edicao' : 'consulta';
 
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (stepMatch) {
                     const stepNum = parseInt(stepMatch[1]);
                     const targetFile = stepFileMap[stepNum] || `etapa-${stepNum}.html`;
-                    const modoParam = isCadastroMode ? '&modo=cadastro' : '';
+                    const modoParam = (isCadastroMode || isProvisionalRip) ? '&modo=cadastro' : '';
                     link.href = `${targetFile}?rip=${currentRip}${modoParam}`;
                     link.removeAttribute('onclick');
                 }
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnFinal) {
         btnFinal.addEventListener('click', async () => {
             // Se estiver no modo cadastro, gera número de registro final
-            if (isCadastroMode && currentRip && currentRip.startsWith('SPU-')) {
+            if (isProvisionalRip && currentRip && currentRip.startsWith('SPU-')) {
                 // Gera número de registro definitivo
                 const now = new Date();
                 const year = now.getFullYear();
@@ -631,7 +631,7 @@ window.goToStep = function(step) {
         return;
     }
     const targetFile = stepFileMap[step] || `etapa-${step}.html`;
-    const modoParam = isCadastroMode ? '&modo=cadastro' : '';
+    const modoParam = (isCadastroMode || isProvisionalRip) ? '&modo=cadastro' : '';
     window.location.href = `${targetFile}?rip=${currentRip}${modoParam}`;
 }
 
