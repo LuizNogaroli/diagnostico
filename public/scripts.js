@@ -1085,25 +1085,49 @@ function popularFormulario(data) {
     // Remover classes de missing-data anteriores
     form.querySelectorAll('.missing-data').forEach(el => el.classList.remove('missing-data'));
 
-    // Preenche campos de endereço estruturados se existirem no data
+    // Preenche campos de endereço estruturados
     const addrFields = ['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'uf', 'cidade'];
     const hasAddrFields = addrFields.some(f => data[f] !== undefined && data[f] !== null && data[f] !== '');
+
     if (hasAddrFields) {
+        // Dados individuais vindos do banco (modo antigo / SQLite local)
         addrFields.forEach(f => {
             const el = document.getElementById(f);
             if (el) {
                 el.value = data[f] || '';
                 if (data[f]) {
-                    if (isConsulta) {
-                        // Dado da base: torna readonly com visual cinza
-                        el.readOnly = true;
-                        el.classList.add('consulta-readonly');
-                    }
+                    if (isConsulta) { el.readOnly = true; el.classList.add('consulta-readonly'); }
                 } else if (isConsulta) {
                     el.classList.add('missing-data');
                 }
             }
         });
+    } else if (data.identificacao) {
+        // Modo Supabase: identificacao vem como string única, decompor nos campos
+        const fullAddr = data.identificacao;
+        // Tenta extrair CEP
+        const cepMatch = fullAddr.match(/CEP:\s*(\d{5}-?\d{3})/);
+        if (cepMatch) {
+            const cepEl = document.getElementById('cep');
+            if (cepEl) { cepEl.value = cepMatch[1]; if (isConsulta) { cepEl.readOnly = true; cepEl.classList.add('consulta-readonly'); } }
+        }
+        // Remove CEP do texto para decompor o resto
+        const addrWithoutCep = fullAddr.replace(/\s*-\s*CEP:\s*\d{5}-?\d{3}/, '').trim();
+        // Tenta splitting por vírgula: "logradouro, numero, complemento, bairro, cidade, UF"
+        const parts = addrWithoutCep.split(',').map(s => s.trim()).filter(Boolean);
+        const setAddrField = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val) { el.value = val; if (isConsulta) { el.readOnly = true; el.classList.add('consulta-readonly'); } }
+        };
+        if (parts.length >= 1) setAddrField('logradouro', parts[0]);
+        if (parts.length >= 2) setAddrField('numero', parts[1]);
+        if (parts.length >= 3) setAddrField('complemento', parts[2]);
+        if (parts.length >= 4) setAddrField('bairro', parts[3]);
+        if (parts.length >= 5) setAddrField('cidade', parts[4]);
+        if (parts.length >= 6) setAddrField('uf', parts[5]);
+    }
+
+    if (hasAddrFields || data.identificacao) {
         // Desabilita botão de buscar CEP se veio da base
         const btnCep = document.getElementById('btn-buscar-cep');
         if (btnCep && isConsulta) {
