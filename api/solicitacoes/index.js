@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
 
             if (files.arquivos && files.arquivos.length > 0) {
                 for (const file of files.arquivos) {
-                    const ext = file.filename.split('.').pop() || 'bin';
+                    const ext = (file.filename || 'file').split('.').pop() || 'bin';
                     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
                     const { error: uploadError } = await supabase.storage
                         .from('uploads')

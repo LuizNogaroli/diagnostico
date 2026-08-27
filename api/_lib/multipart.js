@@ -16,13 +16,16 @@ function parseMultipart(req) {
         });
 
         busboy.on('file', (name, file, info) => {
+            const filename = (info && info.filename) || 'file';
+            const mimeType = (info && info.mimeType) || 'application/octet-stream';
             const chunks = [];
             file.on('data', (chunk) => chunks.push(chunk));
             file.on('end', () => {
+                if (chunks.length === 0) return;
                 if (!files[name]) files[name] = [];
                 files[name].push({
-                    filename: info.filename,
-                    mimeType: info.mimeType,
+                    filename,
+                    mimeType,
                     buffer: Buffer.concat(chunks)
                 });
             });
